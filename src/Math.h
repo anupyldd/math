@@ -31,7 +31,6 @@
 // List of available structures and functions 
 /*****************************************************/
 
-
 namespace math
 {
 	// Constants ----------------------------------------
@@ -67,8 +66,12 @@ namespace math
 	template<class T> double DistanceSq(const Vec2<T>& p1, const Vec2<T>& p2);
 
 	// distance
-	template<class T> double Distance(const Vec2<T>& p1, const Vec2<T>& p2); // between two points p1 and p1
-	//template<class T> double Distance(const Vec2<T>& l1, const Vec2<T>& l2, const Vec2<T>& p);	// between point p and line going through l1 and l2
+	template<class T> double Distance(const Vec2<T>& p1, const Vec2<T>& p2); 
+
+	// dot product
+	template<class T> double Dot(const Vec2<T>& v1, const Vec2<T>& v2);
+	template<class T> double Dot(const Vec3<T>& v1, const Vec3<T>& v2);
+	template<class T> double Dot(const Vec4<T>& v1, const Vec4<T>& v2);
 
 // Aliases -------------------------------------------
 
@@ -148,7 +151,7 @@ namespace math
 
 	public:
 		Vec2() = default;
-		Vec2(T v) : x(x), y(x) {}
+		Vec2(T v) : x(v), y(v) {}
 		Vec2(T x, T y) : x(x), y(y) {}
 		Vec2(const Vec2<T>& src) : x(src.x), y(src.y) {}
 
@@ -163,7 +166,7 @@ namespace math
 		double MagSq() const { return x * x + y * y; }
 		double Mag() const { return std::sqrt(MagSq()); }
 
-		double Dot(const Vec2& v) { return x * v.x + y * v.y; }
+		double Dot(const Vec2& v) const { return x * v.x + y * v.y; }
 
 		void Zero() { x = y = 0; }
 
@@ -224,7 +227,7 @@ namespace math
 
 	public:
 		Vec3() = default;
-		Vec3(T v) : x(x), y(x), z(x) {}
+		Vec3(T v) : x(v), y(v), z(v) {}
 		Vec3(T x, T y, T z) : x(x), y(y), z(z) {}
 		Vec3(const Vec3<T>& src) : x(src.x), y(src.y), z(src.z) {}
 
@@ -237,7 +240,7 @@ namespace math
 		double MagSq() const { return x * x + y * y + z * z; }
 		double Mag() const { return std::sqrt(MagSq()); }
 
-		double Dot(const Vec3& v) { return x * v.x + y * v.y + z * v.z; }
+		double Dot(const Vec3& v) const { return x * v.x + y * v.y + z * v.z; }
 
 		void Zero() { x = y = z = 0; }
 
@@ -298,7 +301,7 @@ namespace math
 
 	public:
 		Vec4() = default;
-		Vec4(T v) : x(x), y(x), z(x), w(x) {}
+		Vec4(T v) : x(v), y(v), z(v), w(v) {}
 		Vec4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
 		Vec4(const Vec4<T>& src) : x(src.x), y(src.y), z(src.z), w(src.w) {}
 
@@ -311,7 +314,7 @@ namespace math
 		double MagSq() const { return x * x + y * y + z * z + w * w; }
 		double Mag() const { return std::sqrt(MagSq()); }
 
-		double Dot(const Vec4& v) { return x * v.x + y * v.y + z * v.z + w * v.w; }
+		double Dot(const Vec4& v) const { return x * v.x + y * v.y + z * v.z + w * v.w; }
 
 		void Zero() { x = y = z = w = 0; }
 
@@ -436,19 +439,26 @@ namespace math
 
 	// distance
 	template<class T>
-	double Distance(const Vec2<T>& p1, const Vec2<T>& p2)
-	{
-		return std::sqrt(DistanceSq(p1, p2));
-	}
+	double Distance(const Vec2<T>& p1, const Vec2<T>& p2){ return std::sqrt(DistanceSq(p1, p2)); }
 	/*
 	template<class T>
-	double Distance(const Vec2<T>& l1, const Vec2<T>& l2, const Vec2<T>& p)	// between point p and line going through l1 and l2
+	double Distance(const Segment2<T>& s, const Vec2<T>& p)
 	{
-
-		//const T a = std::abs((l2.y - l1.y) * p.x - (l2.x - l1.x) * p.y + l2.x + l1.y - l2.y + l1.x);
-		//const T b = std::sqrt(Sqr(l2.y - l1.y) + Sqr(l2.x - l1.x));
-		//return a / b;
+		const double len2 = s.LenSq();
+		if (len2 == 0.0) return Distance(s.a, p);
+		const double t = std::clamp(Dot(p - s.a, s.a - s.b) / len2, 0.0, 1.0);
+		const Vec2<double> proj = s.a + t * (s.b - s.a);
+		return Distance(p, proj);
 	}*/
 
 	// dot product
+	template<class T>
+	//double Dot(const Vec2<T>& v1, const Vec2<T>& v2) { return v1.x * v2.x + v2.y * v2.y; }
+	double Dot(const Vec2<T>& v1, const Vec2<T>& v2) { return v1.Dot(v2); }
+
+	template<class T>
+	double Dot(const Vec3<T>& v1, const Vec3<T>& v2) { return v1.Dot(v2); }
+
+	template<class T>
+	double Dot(const Vec4<T>& v1, const Vec4<T>& v2) { return v1.Dot(v2); }
 }
