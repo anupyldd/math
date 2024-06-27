@@ -205,6 +205,8 @@ namespace math
 		template<class C>
 		friend Vec2<C> operator/(const Vec2<T>& lhs, const C& rhs) { return Vec2<C>(lhs.x / rhs, lhs.y / rhs); }
 
+		friend Vec2<T> operator-(const Vec2<T> vec) { return Vec2<T>(-vec.x, -vec.y); }
+
 		template<class C>
 		friend Vec2<C> operator+(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x + rhs.x, lhs.y + rhs.y); }
 		template<class C>
@@ -288,6 +290,8 @@ namespace math
 		template<class C>
 		friend Vec3<C> operator/(const Vec3<T>& lhs, const Vec3<C>& rhs) { return Vec3<C>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z); }
 
+		friend Vec3<T> operator-(const Vec3<T> vec) { return Vec3<T>(-vec.x, -vec.y, -vec.z); }
+
 		friend std::ostream& operator<<(std::ostream& os, const Vec3<T>& v)
 		{
 			os << v.x << ", " << v.y << ", " << v.z;
@@ -362,6 +366,8 @@ namespace math
 		template<class C>
 		friend Vec4<C> operator/(const Vec4<T>& lhs, const Vec4<C>& rhs) { return Vec4<C>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w); }
 
+		friend Vec4<T> operator-(const Vec4<T> vec) { return Vec4<T>(-vec.x, -vec.y, -vec.z, -vec.w); }
+
 		friend std::ostream& operator<<(std::ostream& os, const Vec4<T>& v)
 		{
 			os << v.x << ", " << v.y << ", " << v.z << ", " << v.w;
@@ -384,9 +390,15 @@ namespace math
 
 		double Len() const { return Distance(a, b); }
 		double LenSq() const { return DistanceSq(a, b); }
+
 		double CenterA() const { return Avg(a.x, a.y); }
 		double CenterB() const { return Avg(b.x, b.y); }
 		Vec2D Center() const { return Avg(a, b); }
+
+		Vec2D Delta() const { return b - a; }
+		double DeltaX() const { return b.x - a.x; }
+		double DeltaY() const { return b.y - a.y; }
+		Vec2D Dir() const { return -(Delta().Normalize()); }
 
 	public:
 		template<class NT>
