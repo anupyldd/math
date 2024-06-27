@@ -74,6 +74,10 @@ namespace math
 	template<class T> double Dot(const Vec3<T>& v1, const Vec3<T>& v2);
 	template<class T> double Dot(const Vec4<T>& v1, const Vec4<T>& v2);
 
+	// angles
+	double DegToRad(double d);
+	double RadToDeg(double r);
+
 // Aliases -------------------------------------------
 
 	// vec 2d
@@ -473,4 +477,8 @@ namespace math
 
 	template<class T>
 	double Dot(const Vec4<T>& v1, const Vec4<T>& v2) { return v1.Dot(v2); }
+
+	// angles
+	double DegToRad(double d) { return d * (PI / 180); }
+	double RadToDeg(double r) { return r * (180 / PI); }
 }
