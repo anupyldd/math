@@ -67,6 +67,7 @@ namespace math
 
 	// distance
 	template<class T> double Distance(const Vec2<T>& p1, const Vec2<T>& p2); 
+	template<class T> double Distance(const Segment2<T>& s, const Vec2<T>& p);
 
 	// dot product
 	template<class T> double Dot(const Vec2<T>& v1, const Vec2<T>& v2);
@@ -440,16 +441,15 @@ namespace math
 	// distance
 	template<class T>
 	double Distance(const Vec2<T>& p1, const Vec2<T>& p2){ return std::sqrt(DistanceSq(p1, p2)); }
-	/*
+	
 	template<class T>
 	double Distance(const Segment2<T>& s, const Vec2<T>& p)
 	{
-		const double len2 = s.LenSq();
-		if (len2 == 0.0) return Distance(s.a, p);
-		const double t = std::clamp(Dot(p - s.a, s.a - s.b) / len2, 0.0, 1.0);
-		const Vec2<double> proj = s.a + t * (s.b - s.a);
-		return Distance(p, proj);
-	}*/
+		const double a = s.a.y - s.b.y;
+		const double b = s.b.x - s.a.x;
+		const double c = s.a.x * s.b.y - s.b.x * s.a.y;
+		return std::abs(a * p.x + b * p.y + c) / std::sqrt(Sqr(a) + Sqr(b));
+	}
 
 	// dot product
 	template<class T>
