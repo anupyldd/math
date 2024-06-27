@@ -31,7 +31,6 @@
 // List of available structures and functions 
 /*****************************************************/
 
-
 namespace math
 {
 	// Constants ----------------------------------------
@@ -67,8 +66,12 @@ namespace math
 	template<class T> double DistanceSq(const Vec2<T>& p1, const Vec2<T>& p2);
 
 	// distance
-	template<class T> double Distance(const Vec2<T>& p1, const Vec2<T>& p2); // between two points p1 and p1
-	//template<class T> double Distance(const Vec2<T>& l1, const Vec2<T>& l2, const Vec2<T>& p);	// between point p and line going through l1 and l2
+	template<class T> double Distance(const Vec2<T>& p1, const Vec2<T>& p2); 
+
+	// dot product
+	template<class T> double Dot(const Vec2<T>& v1, const Vec2<T>& v2);
+	template<class T> double Dot(const Vec3<T>& v1, const Vec3<T>& v2);
+	template<class T> double Dot(const Vec4<T>& v1, const Vec4<T>& v2);
 
 // Aliases -------------------------------------------
 
@@ -440,15 +443,15 @@ namespace math
 	{
 		return std::sqrt(DistanceSq(p1, p2));
 	}
-	/*
-	template<class T>
-	double Distance(const Vec2<T>& l1, const Vec2<T>& l2, const Vec2<T>& p)	// between point p and line going through l1 and l2
-	{
 
-		//const T a = std::abs((l2.y - l1.y) * p.x - (l2.x - l1.x) * p.y + l2.x + l1.y - l2.y + l1.x);
-		//const T b = std::sqrt(Sqr(l2.y - l1.y) + Sqr(l2.x - l1.x));
-		//return a / b;
-	}*/
 
 	// dot product
+	template<class T>
+	double Dot(const Vec2<T>& v1, const Vec2<T>& v2) { return v1.x * v2.x + v2.y * v2.y; }
+
+	template<class T>
+	double Dot(const Vec3<T>& v1, const Vec3<T>& v2) { return v1.x * v2.x + v2.y * v2.y + v1.z * v2.z; }
+
+	template<class T>
+	double Dot(const Vec4<T>& v1, const Vec4<T>& v2) { return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w; }
 }
