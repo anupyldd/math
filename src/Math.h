@@ -176,8 +176,15 @@ namespace math
 		void Zero() { x = y = 0; }
 
 		Vec2D Normalize() const { double mag = Mag(); return (mag == 0) ? Vec2<double>(x, y) : *this / mag; }
-		void RotateInplace(float ang) { x = x * std::cos(ang) - y * std::sin(ang); y = x * std::sin(ang) + y * std::cos(ang); }
-		Vec2D Rotate(float ang) const { return Vec2D(x * std::cos(ang) - y * std::sin(ang), x * std::sin(ang) + y * std::cos(ang)); }
+		void Rotate(float rad) 
+		{
+			float cs = std::cos(rad);
+			float sn = std::sin(rad);
+			float nx = x * cs - y * sn;
+			float ny = x * sn + y * cs;
+			x = nx; 
+			y = ny;
+		}
 
 		std::string ToStr() const { return std::format("{}, {}", x, y); }
 
