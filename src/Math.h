@@ -175,7 +175,16 @@ namespace math
 
 		void Zero() { x = y = 0; }
 
-		Vec2<double> Normalize() const { double mag = Mag(); return (mag == 0) ? Vec2<double>(x, y) : *this / mag; }
+		Vec2D Normalize() const { double mag = Mag(); return (mag == 0) ? Vec2<double>(x, y) : *this / mag; }
+		void Rotate(float rad) 
+		{
+			float cs = std::cos(rad);
+			float sn = std::sin(rad);
+			float nx = x * cs - y * sn;
+			float ny = x * sn + y * cs;
+			x = nx; 
+			y = ny;
+		}
 
 		std::string ToStr() const { return std::format("{}, {}", x, y); }
 
@@ -469,7 +478,6 @@ namespace math
 
 	// dot product
 	template<class T>
-	//double Dot(const Vec2<T>& v1, const Vec2<T>& v2) { return v1.x * v2.x + v2.y * v2.y; }
 	double Dot(const Vec2<T>& v1, const Vec2<T>& v2) { return v1.Dot(v2); }
 
 	template<class T>
@@ -481,4 +489,7 @@ namespace math
 	// angles
 	double DegToRad(double d) { return d * (PI / 180); }
 	double RadToDeg(double r) { return r * (180 / PI); }
+
+	//template<class T>
+	//double Angle(const Vec2<T>& v) { return std::asin(v.Mag()); }
 }
