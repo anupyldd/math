@@ -1,4 +1,2 @@
-This repository contains a single header math library.<br/>
-The library includes a number of common mathematical structures, <br/>
-constants and operations. Available functionaliry is listed<br/>
-at the top of the header file.
+This repository contains a single header math library. The library includes a number of common mathematical structures,
+constants and operations. Available functionality is listed at the top of the header file.
