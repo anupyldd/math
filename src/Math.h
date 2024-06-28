@@ -29,6 +29,7 @@
 #include <array>
 #include <exception>
 #include <stdexcept>
+#include <type_traits>
 
 /*****************************************************/
 // List of available structures and functions 
@@ -159,7 +160,148 @@ namespace math
 
 namespace math
 {
+	namespace helper
+	{
+		template<class T, class NT, size_t size>
+		void CopyCastArray(const std::array<T, size>& src, std::array<NT, size>& dest)
+		{
+			for (size_t i = 0; i < size; ++i)
+			{
+				dest[i] = static_cast<NT>(src[i]);
+			}
+		}
+	}
+
 	// Structures ------------------------------------------
+
+	template<class T, size_t size>
+	struct Vec
+	{
+		std::array<T, size> elems;
+
+	public:
+		Vec() = default;
+		Vec(T v) { elems.fill(v); }
+		Vec(const std::array<T, size> src) : elems(src) { }
+
+		T Sum() const { return std::accumulate(elems.begin(), elems.end(), 0); }
+		T Mul() const { return std::accumulate(elems.begin(), elems.end(), 1, std::multiplies<T>()); }
+		T Avg() const { return Sum() / elems.size(); }
+
+		T Min() const { return std::min_element(elems.begin(), elems.end()); }
+		T Max() const { return std::max_element(elems.begin(), elems.end()); }
+		double MagSq() const
+		{
+			double mag = 0.0;
+			for (auto e : elems) { mag += (e * e); }
+			return mag;
+		}
+		double Mag() const { return std::sqrt(MagSq()); }
+
+		double Dot(const Vec<T, size>& v) const
+		{
+			double dot = 0.0;
+			for (size_t i = 0; i < elems.size(); ++i) { dot += (elems[i] * v.elems[i]); }
+			return dot;
+		}
+		//Vec<double, size> Normalize() const { double mag = Mag(); return ? *this : *this / mag; }
+
+	public:
+		template<class NT>
+		operator Vec<NT, size>() const 
+		{
+			Vec<NT, size> out;
+			helper::CopyCastArray(this->elems, out.elems);
+			return out;
+		}
+
+		template<class C>
+		Vec<C, size> operator+(const C& rhs) 
+		{ 
+			Vec<C, size> out = (Vec<C, size>)*this; 
+			std::for_each(out.elems.begin(), out.elems.end(), [&](C& e) { e += rhs; }); 
+			return out; 
+		}
+		template<class C>
+		Vec<C, size> operator-(const C& rhs)
+		{
+			Vec<C, size> out = (Vec<C, size>)*this;
+			std::for_each(out.elems.begin(), out.elems.end(), [&](C& e) { e -= rhs; });
+			return out;
+		}
+		template<class C>
+		Vec<C, size> operator*(const C& rhs)
+		{
+			Vec<C, size> out = (Vec<C, size>)*this;
+			std::for_each(out.elems.begin(), out.elems.end(), [&](C& e) { e *= rhs; });
+			return out;
+		}
+		template<class C>
+		Vec<C, size> operator/(const C& rhs)
+		{
+			Vec<C, size> out = (Vec<C, size>)*this;
+			std::for_each(out.elems.begin(), out.elems.end(), [&](C& e) { e /= rhs; });
+			return out;
+		}
+
+		Vec<T, size> operator-()
+		{
+			Vec<T, size> out = *this;
+			std::for_each(out.elems.begin(), out.elems.end(), [](T& e) { e = -e; });
+			return out;
+		}
+
+		template<class C, size_t size2>
+		auto operator+(const Vec<C, size2>& rhs)
+		{
+			if constexpr (size2 > size)
+			{
+				Vec<C, size2> out;
+				helper::CopyCastArray(rhs.elems, out.elems);
+				for (size_t i = 0; i < size; i++)
+				{
+					out.elems[i] += this->elems[i];
+				}
+				return out;
+			}
+			else
+			{
+				Vec<C, size> out;
+				helper::CopyCastArray(this->elems, out.elems);
+				for (size_t i = 0; i < size2; i++)
+				{
+					out.elems[i] += rhs.elems[i];
+				}
+				return out;
+			}
+		}
+
+
+		friend std::ostream& operator<<(std::ostream& os, const Vec<T, size>& v)
+		{
+			for (size_t i = 0; i < v.elems.size(); ++i) os << v.elems[i] << ((i == (v.elems.size() - 1)) ? "" : ", ");
+			return os;
+		}
+			/*
+
+
+		template<class C>
+		friend Vec2<C> operator+(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x + rhs.x, lhs.y + rhs.y); }
+		template<class C>
+		friend Vec2<C> operator-(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x - rhs.x, lhs.y - rhs.y); }
+		template<class C>
+		friend Vec2<C> operator*(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x * rhs.x, lhs.y * rhs.y); }
+		template<class C>
+		friend Vec2<C> operator/(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x / rhs.x, lhs.y / rhs.y); }
+
+		friend std::ostream& operator<<(std::ostream& os, const Vec2<T>& v)
+		{
+			os << v.x << ", " << v.y;
+			return os;
+		}
+	};
+*/
+	};
 
 	template<class T>
 	struct Vec2
@@ -485,7 +627,7 @@ namespace math
 	};
 
 	// -----------------------------------------------------
-
+	/*
 	template<class T, size_t row, size_t col>
 	struct Matrix2
 	{
@@ -494,9 +636,9 @@ namespace math
 	public:
 		Vec2<T> operator*(const Vec2<T>& vec) const
 		{
+			Vec2<T> out;
 			for (size_t r = 0; r < row; ++r)
 			{
-				T sum = (T)0.0;
 				for (size_t c = 0; c < col; ++c)
 				{
 
@@ -504,7 +646,7 @@ namespace math
 			}
 		}
 		
-	};
+	};*/
 
 	// Functions ----------------------------------------------
 
