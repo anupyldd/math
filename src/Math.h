@@ -26,6 +26,8 @@
 #include <numbers>
 #include <initializer_list>
 #include <numeric>
+#include <array>
+#include <exception>
 
 /*****************************************************/
 // List of available structures and functions 
@@ -50,6 +52,11 @@ namespace math
 	template<class T> struct Vec4;
 
 	template<class T> struct Segment2;
+
+	template<class T, size_t row, size_t col> struct Matrix2;
+
+	template<class T, size_t row, size_t col>
+	using Array2 = std::array<std::array<T, col>, row>;	// helper for creating 2d arrays
 
 	// Functions ----------------------------------------
 
@@ -214,6 +221,16 @@ namespace math
 		bool operator>=(const Vec2& v) { return MagSq() >= v.MagSq(); }
 		bool operator<(const Vec2& v) { return MagSq() < v.MagSq(); }
 		bool operator<=(const Vec2& v) { return MagSq() <= v.MagSq(); }
+		/*
+		T& operator[](size_t i)
+		{
+			switch (i)
+			{
+				case 0: return x;
+				case 1: return y;
+				default: 
+			}
+		}*/
 
 		template<class C>
 		friend Vec2<C> operator+(const Vec2<T>& lhs, const C& rhs) { return Vec2<C>(lhs.x + rhs, lhs.y + rhs); }
@@ -441,6 +458,28 @@ namespace math
 			os << "(" << s.a.x << ", " << s.a.y << ")" << " (" << s.b.x << ", " << s.b.y << ")";
 			return os;
 		}
+	};
+
+	// -----------------------------------------------------
+
+	template<class T, size_t row, size_t col>
+	struct Matrix2
+	{
+		Array2<T, row, col> elems;
+
+	public:
+		Vec2<T> operator*(const Vec2<T>& vec) const
+		{
+			for (size_t r = 0; r < row; ++r)
+			{
+				T sum = (T)0.0;
+				for (size_t c = 0; c < col; ++c)
+				{
+
+				}
+			}
+		}
+		
 	};
 
 	// Functions ----------------------------------------------
