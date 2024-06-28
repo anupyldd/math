@@ -28,6 +28,7 @@
 #include <numeric>
 #include <array>
 #include <exception>
+#include <stdexcept>
 
 /*****************************************************/
 // List of available structures and functions 
@@ -221,16 +222,16 @@ namespace math
 		bool operator>=(const Vec2& v) { return MagSq() >= v.MagSq(); }
 		bool operator<(const Vec2& v) { return MagSq() < v.MagSq(); }
 		bool operator<=(const Vec2& v) { return MagSq() <= v.MagSq(); }
-		/*
+		
 		T& operator[](size_t i)
 		{
 			switch (i)
 			{
 				case 0: return x;
 				case 1: return y;
-				default: 
+				default: throw std::out_of_range("Index out of range. Allowed indices for Vec2: 0, 1.");
 			}
-		}*/
+		}
 
 		template<class C>
 		friend Vec2<C> operator+(const Vec2<T>& lhs, const C& rhs) { return Vec2<C>(lhs.x + rhs, lhs.y + rhs); }
@@ -308,6 +309,17 @@ namespace math
 		bool operator<(const Vec3& v) { return MagSq() < v.MagSq(); }
 		bool operator<=(const Vec3& v) { return MagSq() <= v.MagSq(); }
 
+		T& operator[](size_t i)
+		{
+			switch (i)
+			{
+			case 0: return x;
+			case 1: return y;
+			case 2: return z;
+			default: throw std::out_of_range("Index out of range. Allowed indices for Vec3: 0, 1, 2.");
+			}
+		}
+
 		template<class C>
 		friend Vec3<C> operator+(const Vec3<T>& lhs, const C& rhs) { return Vec3<C>(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs); }
 		template<class C>
@@ -383,6 +395,18 @@ namespace math
 		bool operator>=(const Vec4& v) { return MagSq() >= v.MagSq(); }
 		bool operator<(const Vec4& v) { return MagSq() < v.MagSq(); }
 		bool operator<=(const Vec4& v) { return MagSq() <= v.MagSq(); }
+
+		T& operator[](size_t i)
+		{
+			switch (i)
+			{
+			case 0: return x;
+			case 1: return y;
+			case 2: return z;
+			case 3: return w;
+			default: throw std::out_of_range("Index out of range. Allowed indices for Vec4: 0, 1, 2, 3.");
+			}
+		}
 
 		template<class C>
 		friend Vec4<C> operator+(const Vec4<T>& lhs, const C& rhs) { return Vec4<C>(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs, lhs.w + rhs); }
