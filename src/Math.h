@@ -74,9 +74,13 @@ namespace math
 	template<class T> double Dot(const Vec3<T>& v1, const Vec3<T>& v2);
 	template<class T> double Dot(const Vec4<T>& v1, const Vec4<T>& v2);
 
-	// angles
+	// rotation
 	double DegToRad(double d);
 	double RadToDeg(double r);
+
+	template<class T> void Rotate(Vec2<T>& v, float rad);
+	template<class T> void Rotate90CW(Vec2<T>& v);			// clockwise
+	template<class T> void Rotate90CCW(Vec2<T>& v);			// counterclockwise
 
 // Aliases -------------------------------------------
 
@@ -185,6 +189,8 @@ namespace math
 			x = nx; 
 			y = ny;
 		}
+		void Rotate90CW() { float nx = y, ny = -x; x = nx; y = ny; }
+		void Rotate90CCW() { float nx = -y, ny = x; x = nx; y = ny; }
 
 		std::string ToStr() const { return std::format("{}, {}", x, y); }
 
@@ -486,9 +492,18 @@ namespace math
 	template<class T>
 	double Dot(const Vec4<T>& v1, const Vec4<T>& v2) { return v1.Dot(v2); }
 
-	// angles
+	// rotation
 	double DegToRad(double d) { return d * (PI / 180); }
 	double RadToDeg(double r) { return r * (180 / PI); }
+
+	template<class T>
+	void Rotate(Vec2<T>& v, float rad) { v.Rotate(rad); }
+	
+	template<class T>
+	void Rotate90CW(Vec2<T>& v) { v.Rotate90CW(); }
+
+	template<class T>
+	void Rotate90CCW(Vec2<T>& v) { v.Rotate90CCW(); }
 
 	//template<class T>
 	//double Angle(const Vec2<T>& v) { return std::asin(v.Mag()); }
