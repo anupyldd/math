@@ -276,6 +276,80 @@ namespace math
 			}
 		}
 
+		template<class C, size_t size2>
+		auto operator-(const Vec<C, size2>& rhs)
+		{
+			if constexpr (size2 > size)
+			{
+				Vec<C, size2> out;
+				helper::CopyCastArray(rhs.elems, out.elems);
+				for (size_t i = 0; i < size; i++)
+				{
+					out.elems[i] -= this->elems[i];
+				}
+				return out;
+			}
+			else
+			{
+				Vec<C, size> out;
+				helper::CopyCastArray(this->elems, out.elems);
+				for (size_t i = 0; i < size2; i++)
+				{
+					out.elems[i] -= rhs.elems[i];
+				}
+				return out;
+			}
+		}
+
+		template<class C, size_t size2>
+		auto operator*(const Vec<C, size2>& rhs)
+		{
+			if constexpr (size2 > size)
+			{
+				Vec<C, size2> out;
+				helper::CopyCastArray(rhs.elems, out.elems);
+				for (size_t i = 0; i < size; i++)
+				{
+					out.elems[i] *= this->elems[i];
+				}
+				return out;
+			}
+			else
+			{
+				Vec<C, size> out;
+				helper::CopyCastArray(this->elems, out.elems);
+				for (size_t i = 0; i < size2; i++)
+				{
+					out.elems[i] *= rhs.elems[i];
+				}
+				return out;
+			}
+		}
+
+		template<class C, size_t size2>
+		auto operator/(const Vec<C, size2>& rhs)
+		{
+			if constexpr (size2 > size)
+			{
+				Vec<C, size2> out;
+				helper::CopyCastArray(rhs.elems, out.elems);
+				for (size_t i = 0; i < size; i++)
+				{
+					out.elems[i] /= this->elems[i];
+				}
+				return out;
+			}
+			else
+			{
+				Vec<C, size> out;
+				helper::CopyCastArray(this->elems, out.elems);
+				for (size_t i = 0; i < size2; i++)
+				{
+					out.elems[i] /= rhs.elems[i];
+				}
+				return out;
+			}
+		}
 
 		friend std::ostream& operator<<(std::ostream& os, const Vec<T, size>& v)
 		{
