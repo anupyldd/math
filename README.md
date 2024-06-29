@@ -7,7 +7,7 @@ All structures support formatted stream output.<br/>
 Currently implemented:<br/>
 - Vectors (general with templated size, 2D, 3D, 4D)
 	- Arithmetic operations with scalars and vectors
-	- Calculation of magnitude, averade, dot product, distance
+	- Calculation of magnitude, average, dot product, distance
 	- Rotation
 - Segment (2D)
 	- Arithmetic operations
