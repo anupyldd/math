@@ -828,6 +828,21 @@ namespace math
 			}
 		}
 
+		static Matrix2<T, row, col> Scale(T factor)
+		{
+			Matrix2<T, row, col> out;
+			for (size_t r = 0; r < row; ++r)
+			{
+				out.elems[r][r] = factor;
+			}
+			return out;
+		}
+		static Matrix2<T, row, col> Identity()
+		{
+			return Scale(1);
+		}
+		
+
 	public:
 		template<class C>
 		friend auto operator*(const Matrix2<T, row, col>& mat, const Vec<C, row>& vec)
