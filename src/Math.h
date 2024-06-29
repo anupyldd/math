@@ -808,26 +808,59 @@ namespace math
 	};
 
 	// -----------------------------------------------------
-	/*
+	
 	template<class T, size_t row, size_t col>
 	struct Matrix2
 	{
 		Array2<T, row, col> elems;
 
 	public:
-		Vec2<T> operator*(const Vec2<T>& vec) const
+		Matrix2() { for (auto& r : elems) r.fill((T)0); };
+		Matrix2(const std::initializer_list<std::initializer_list<T>>& ls)
 		{
-			Vec2<T> out;
-			for (size_t r = 0; r < row; ++r)
+			for (size_t i = 0; i < ls.size(); ++i)
 			{
-				for (size_t c = 0; c < col; ++c)
+				auto r = *(ls.begin() + i);
+				for (size_t j = 0; j < r.size(); j++)
 				{
-
+					elems[i][j] = *(r.begin() + j);
 				}
 			}
 		}
+
+	public:
+		template<class C>
+		friend auto operator*(const Matrix2<T, row, col>& mat, const Vec<C, row>& vec)
+		{
+			auto out = (helper::ElemType<T, C>()) ? Vec<T, row>() : Vec<C, row>();
+			/*for (size_t r = 0; r < row; ++r)
+			{
+				for (size_t c = 0; c < col; ++c)
+				{
+					out.elems[r] = mat.elems[r][c] * vec.elems[c];
+				}
+			}*/
+			for (size_t i = 0; i < row; i++)
+			{
+				out.elems[i] = Vec<T, col>(mat.elems[i]).Dot(vec);
+			}
+			return out;
+		}
 		
-	};*/
+		friend std::ostream& operator<<(std::ostream& os, const Matrix2<T, row, col>& m)
+		{
+			for (size_t r = 0; r < row; ++r)
+			{
+				os << "[";
+				for (size_t c = 0; c < col; ++c)
+				{
+					os << m.elems[r][c] << ((c == (col - 1)) ? "" : ", ");
+				}
+				os << "]\n";
+			}
+			return os;
+		}
+	};
 
 	// Functions ----------------------------------------------
 
