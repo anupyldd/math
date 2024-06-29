@@ -833,13 +833,6 @@ namespace math
 		friend auto operator*(const Matrix2<T, row, col>& mat, const Vec<C, row>& vec)
 		{
 			auto out = (helper::ElemType<T, C>()) ? Vec<T, row>() : Vec<C, row>();
-			/*for (size_t r = 0; r < row; ++r)
-			{
-				for (size_t c = 0; c < col; ++c)
-				{
-					out.elems[r] = mat.elems[r][c] * vec.elems[c];
-				}
-			}*/
 			for (size_t i = 0; i < row; i++)
 			{
 				out.elems[i] = Vec<T, col>(mat.elems[i]).Dot(vec);
