@@ -324,77 +324,155 @@ namespace math
 		}
 
 		template<class C, size_t size2>
-		auto operator-(const Vec<C, size2>& rhs)
+		friend auto operator-(const Vec<T, size>& lhs, const Vec<C, size2>& rhs)
 		{
 			if constexpr (size2 > size)
 			{
-				Vec<C, size2> out;
-				helper::CopyCastArray(rhs.elems, out.elems);
-				for (size_t i = 0; i < size; i++)
+				if constexpr (helper::ElemType<T, C>())
 				{
-					out.elems[i] -= this->elems[i];
+					Vec<T, size2 > out;
+					helper::CopyCastArray(rhs.elems, out.elems);
+					for (size_t i = 0; i < size; i++)
+					{
+						out.elems[i] -= lhs.elems[i];
+					}
+					return out;
 				}
-				return out;
+				else
+				{
+					Vec<C, size2 > out;
+					helper::CopyCastArray(rhs.elems, out.elems);
+					for (size_t i = 0; i < size; i++)
+					{
+						out.elems[i] -= lhs.elems[i];
+					}
+					return out;
+				}
 			}
 			else
 			{
-				Vec<C, size> out;
-				helper::CopyCastArray(this->elems, out.elems);
-				for (size_t i = 0; i < size2; i++)
+				if constexpr (helper::ElemType<T, C>())
 				{
-					out.elems[i] -= rhs.elems[i];
+					Vec<T, size> out;
+					helper::CopyCastArray(lhs.elems, out.elems);
+					for (size_t i = 0; i < size2; i++)
+					{
+						out.elems[i] -= rhs.elems[i];
+					}
+					return out;
 				}
-				return out;
+				else
+				{
+					Vec<C, size> out;
+					helper::CopyCastArray(lhs.elems, out.elems);
+					for (size_t i = 0; i < size2; i++)
+					{
+						out.elems[i] -= rhs.elems[i];
+					}
+					return out;
+				}
 			}
 		}
 
 		template<class C, size_t size2>
-		auto operator*(const Vec<C, size2>& rhs)
+		friend auto operator*(const Vec<T, size>& lhs, const Vec<C, size2>& rhs)
 		{
 			if constexpr (size2 > size)
 			{
-				Vec<C, size2> out;
-				helper::CopyCastArray(rhs.elems, out.elems);
-				for (size_t i = 0; i < size; i++)
+				if constexpr (helper::ElemType<T, C>())
 				{
-					out.elems[i] *= this->elems[i];
+					Vec<T, size2 > out;
+					helper::CopyCastArray(rhs.elems, out.elems);
+					for (size_t i = 0; i < size; i++)
+					{
+						out.elems[i] *= lhs.elems[i];
+					}
+					return out;
 				}
-				return out;
+				else
+				{
+					Vec<C, size2 > out;
+					helper::CopyCastArray(rhs.elems, out.elems);
+					for (size_t i = 0; i < size; i++)
+					{
+						out.elems[i] *= lhs.elems[i];
+					}
+					return out;
+				}
 			}
 			else
 			{
-				Vec<C, size> out;
-				helper::CopyCastArray(this->elems, out.elems);
-				for (size_t i = 0; i < size2; i++)
+				if constexpr (helper::ElemType<T, C>())
 				{
-					out.elems[i] *= rhs.elems[i];
+					Vec<T, size> out;
+					helper::CopyCastArray(lhs.elems, out.elems);
+					for (size_t i = 0; i < size2; i++)
+					{
+						out.elems[i] *= rhs.elems[i];
+					}
+					return out;
 				}
-				return out;
+				else
+				{
+					Vec<C, size> out;
+					helper::CopyCastArray(lhs.elems, out.elems);
+					for (size_t i = 0; i < size2; i++)
+					{
+						out.elems[i] *= rhs.elems[i];
+					}
+					return out;
+				}
 			}
 		}
 
 		template<class C, size_t size2>
-		auto operator/(const Vec<C, size2>& rhs)
+		friend auto operator/(const Vec<T, size>& lhs, const Vec<C, size2>& rhs)
 		{
 			if constexpr (size2 > size)
 			{
-				Vec<C, size2> out;
-				helper::CopyCastArray(rhs.elems, out.elems);
-				for (size_t i = 0; i < size; i++)
+				if constexpr (helper::ElemType<T, C>())
 				{
-					out.elems[i] /= this->elems[i];
+					Vec<T, size2 > out;
+					helper::CopyCastArray(rhs.elems, out.elems);
+					for (size_t i = 0; i < size; i++)
+					{
+						out.elems[i] /= lhs.elems[i];
+					}
+					return out;
 				}
-				return out;
+				else
+				{
+					Vec<C, size2 > out;
+					helper::CopyCastArray(rhs.elems, out.elems);
+					for (size_t i = 0; i < size; i++)
+					{
+						out.elems[i] /= lhs.elems[i];
+					}
+					return out;
+				}
 			}
 			else
 			{
-				Vec<C, size> out;
-				helper::CopyCastArray(this->elems, out.elems);
-				for (size_t i = 0; i < size2; i++)
+				if constexpr (helper::ElemType<T, C>())
 				{
-					out.elems[i] /= rhs.elems[i];
+					Vec<T, size> out;
+					helper::CopyCastArray(lhs.elems, out.elems);
+					for (size_t i = 0; i < size2; i++)
+					{
+						out.elems[i] /= rhs.elems[i];
+					}
+					return out;
 				}
-				return out;
+				else
+				{
+					Vec<C, size> out;
+					helper::CopyCastArray(lhs.elems, out.elems);
+					for (size_t i = 0; i < size2; i++)
+					{
+						out.elems[i] /= rhs.elems[i];
+					}
+					return out;
+				}
 			}
 		}
 
