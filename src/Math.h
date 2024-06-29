@@ -30,6 +30,7 @@
 #include <exception>
 #include <stdexcept>
 #include <type_traits>
+#include <variant>
 
 /*****************************************************/
 // List of available structures and functions 
@@ -170,6 +171,26 @@ namespace math
 				dest[i] = static_cast<NT>(src[i]);
 			}
 		}
+
+		// used for deducing what type the resulting structure will hold,
+		// it prioritizes floating types and types with higher precision.
+		// if returns true - T, else - C
+		template<class T, class C>
+		constexpr bool ElemType()
+		{
+			if constexpr (std::is_same<T, C>::value)
+			{
+				if constexpr (sizeof(T) > sizeof(C)) return true;
+				else return false;
+			}
+			else
+			{
+				if constexpr (std::is_floating_point<T>::value && !(std::is_floating_point<C>::value)) return true;
+				if constexpr (std::is_floating_point<C>::value && !(std::is_floating_point<C>::value)) return false;
+				if constexpr (sizeof(T) > sizeof(C)) return true;
+				else return false;
+			}
+		}
 	}
 
 	// Structures ------------------------------------------
@@ -252,27 +273,53 @@ namespace math
 		}
 
 		template<class C, size_t size2>
-		auto operator+(const Vec<C, size2>& rhs)
+		friend auto operator+(const Vec<T, size>& lhs, const Vec<C, size2>& rhs)
 		{
 			if constexpr (size2 > size)
 			{
-				Vec<C, size2> out;
-				helper::CopyCastArray(rhs.elems, out.elems);
-				for (size_t i = 0; i < size; i++)
+				if constexpr (helper::ElemType<T, C>())
 				{
-					out.elems[i] += this->elems[i];
+					Vec<T, size2 > out;
+					helper::CopyCastArray(rhs.elems, out.elems);
+					for (size_t i = 0; i < size; i++)
+					{
+						out.elems[i] += lhs.elems[i];
+					}
+					return out;
 				}
-				return out;
+				else
+				{
+					Vec<C, size2 > out;
+					helper::CopyCastArray(rhs.elems, out.elems);
+					for (size_t i = 0; i < size; i++)
+					{
+						out.elems[i] += lhs.elems[i];
+					}
+					return out;
+				}
 			}
 			else
 			{
-				Vec<C, size> out;
-				helper::CopyCastArray(this->elems, out.elems);
-				for (size_t i = 0; i < size2; i++)
+				if constexpr (helper::ElemType<T, C>())
 				{
-					out.elems[i] += rhs.elems[i];
+					Vec<T, size> out;
+					helper::CopyCastArray(lhs.elems, out.elems);
+					for (size_t i = 0; i < size2; i++)
+					{
+						out.elems[i] += rhs.elems[i];
+					}
+					return out;
 				}
-				return out;
+				else
+				{
+					Vec<C, size> out;
+					helper::CopyCastArray(lhs.elems, out.elems);
+					for (size_t i = 0; i < size2; i++)
+					{
+						out.elems[i] += rhs.elems[i];
+					}
+					return out;
+				}
 			}
 		}
 
