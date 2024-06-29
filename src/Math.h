@@ -204,7 +204,7 @@ namespace math
 			for (size_t i = 0; i < elems.size(); ++i) { dot += (elems[i] * v.elems[i]); }
 			return dot;
 		}
-		//Vec<double, size> Normalize() const { double mag = Mag(); return ? *this : *this / mag; }
+		Vec<double, size> Normalize() const { double mag = Mag(); return (mag == 0.0) ? (Vec<double, size>)(*this) : (Vec<double, size>)((*this) / mag); }
 
 	public:
 		template<class NT>
@@ -216,30 +216,30 @@ namespace math
 		}
 
 		template<class C>
-		Vec<C, size> operator+(const C& rhs) 
+		friend Vec<C, size> operator+(const Vec<T, size>& lhs, const C& rhs)
 		{ 
-			Vec<C, size> out = (Vec<C, size>)*this; 
+			Vec<C, size> out = (Vec<C, size>)lhs; 
 			std::for_each(out.elems.begin(), out.elems.end(), [&](C& e) { e += rhs; }); 
 			return out; 
 		}
 		template<class C>
-		Vec<C, size> operator-(const C& rhs)
+		friend Vec<C, size> operator-(const Vec<T, size>&lhs, const C& rhs)
 		{
-			Vec<C, size> out = (Vec<C, size>)*this;
+			Vec<C, size> out = (Vec<C, size>)lhs;
 			std::for_each(out.elems.begin(), out.elems.end(), [&](C& e) { e -= rhs; });
 			return out;
 		}
 		template<class C>
-		Vec<C, size> operator*(const C& rhs)
+		friend Vec<C, size> operator*(const Vec<T, size>& lhs, const C& rhs)
 		{
-			Vec<C, size> out = (Vec<C, size>)*this;
+			Vec<C, size> out = (Vec<C, size>)lhs;
 			std::for_each(out.elems.begin(), out.elems.end(), [&](C& e) { e *= rhs; });
 			return out;
 		}
 		template<class C>
-		Vec<C, size> operator/(const C& rhs)
+		friend Vec<C, size> operator/(const Vec<T, size>& lhs, const C& rhs)
 		{
-			Vec<C, size> out = (Vec<C, size>)*this;
+			Vec<C, size> out = (Vec<C, size>)lhs;
 			std::for_each(out.elems.begin(), out.elems.end(), [&](C& e) { e /= rhs; });
 			return out;
 		}
@@ -356,25 +356,7 @@ namespace math
 			for (size_t i = 0; i < v.elems.size(); ++i) os << v.elems[i] << ((i == (v.elems.size() - 1)) ? "" : ", ");
 			return os;
 		}
-			/*
 
-
-		template<class C>
-		friend Vec2<C> operator+(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x + rhs.x, lhs.y + rhs.y); }
-		template<class C>
-		friend Vec2<C> operator-(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x - rhs.x, lhs.y - rhs.y); }
-		template<class C>
-		friend Vec2<C> operator*(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x * rhs.x, lhs.y * rhs.y); }
-		template<class C>
-		friend Vec2<C> operator/(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x / rhs.x, lhs.y / rhs.y); }
-
-		friend std::ostream& operator<<(std::ostream& os, const Vec2<T>& v)
-		{
-			os << v.x << ", " << v.y;
-			return os;
-		}
-	};
-*/
 	};
 
 	template<class T>
