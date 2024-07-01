@@ -50,9 +50,15 @@ namespace math
 
 	// Structures ---------------------------------------
 
-	template<class T> struct Vec2;
-	template<class T> struct Vec3;
-	template<class T> struct Vec4;
+	template<class T, size_t size> struct Vec;
+
+	template<class T> using Vec2 = Vec<T, 2>;
+	template<class T> using Vec3 = Vec<T, 3>;
+	template<class T> using Vec4 = Vec<T, 4>;
+
+	//template<class T> struct Vec2;
+	//template<class T> struct Vec3;
+	//template<class T> struct Vec4;
 
 	template<class T> struct Segment2;
 
@@ -62,7 +68,7 @@ namespace math
 	using Array2 = std::array<std::array<T, col>, row>;	// helper for creating 2d arrays
 
 	// Functions ----------------------------------------
-
+	
 	// square
 	template<class T> T Sqr(T a);
 
@@ -87,10 +93,12 @@ namespace math
 	// rotation
 	double DegToRad(double d);
 	double RadToDeg(double r);
-
+	/*
 	template<class T> void Rotate(Vec2<T>& v, float rad);
 	template<class T> void Rotate90CW(Vec2<T>& v);			// clockwise
 	template<class T> void Rotate90CCW(Vec2<T>& v);			// counterclockwise
+	*/
+	
 
 // Aliases -------------------------------------------
 
@@ -211,6 +219,7 @@ namespace math
 
 		T Min() const { return std::min_element(elems.begin(), elems.end()); }
 		T Max() const { return std::max_element(elems.begin(), elems.end()); }
+
 		double MagSq() const
 		{
 			double mag = 0.0;
@@ -235,6 +244,9 @@ namespace math
 			helper::CopyCastArray(this->elems, out.elems);
 			return out;
 		}
+
+		T& operator[](uint16_t i) { return elems[i]; }
+		const T& operator[](uint16_t i) const { return elems[i]; }
 
 		template<class C>
 		friend Vec<C, size> operator+(const Vec<T, size>& lhs, const C& rhs)
@@ -484,282 +496,8 @@ namespace math
 
 	};
 
-	template<class T>
-	struct Vec2
-	{
-		T x, y;
-
-	public:
-		Vec2() = default;
-		Vec2(T v) : x(v), y(v) {}
-		Vec2(T x, T y) : x(x), y(y) {}
-		Vec2(const Vec2<T>& src) : x(src.x), y(src.y) {}
-
-		T Sum() const { return x + y; }
-		T Sub() const { return x - y; }
-		T Mul() const { return x * y; }
-		T Div() const { return x / y; }
-		T Avg() const { return (x + y) / 2; }
-
-		T Min() const { return std::min(x, y); }
-		T Max() const { return std::max(x, y); }
-		double MagSq() const { return x * x + y * y; }
-		double Mag() const { return std::sqrt(MagSq()); }
-
-		double Dot(const Vec2& v) const { return x * v.x + y * v.y; }
-
-		void Zero() { x = y = 0; }
-
-		Vec2D Normalize() const { double mag = Mag(); return (mag == 0) ? Vec2<double>(x, y) : *this / mag; }
-		void Rotate(float rad) 
-		{
-			float cs = std::cos(rad);
-			float sn = std::sin(rad);
-			float nx = x * cs - y * sn;
-			float ny = x * sn + y * cs;
-			x = nx; 
-			y = ny;
-		}
-		void Rotate90CW() { float nx = y, ny = -x; x = nx; y = ny; }
-		void Rotate90CCW() { float nx = -y, ny = x; x = nx; y = ny; }
-
-		std::string ToStr() const { return std::format("{}, {}", x, y); }
-
-	public:
-		template<class NT>
-		operator Vec2<NT>() const { return Vec2<NT>{(NT)x, (NT)y}; }
-
-		Vec2& operator+=(T v) { x += v; y += v; return *this; }
-		Vec2& operator-=(T v) { x -= v; y -= v; return *this; }
-		Vec2& operator*=(T v) { x *= v; y *= v; return *this; }
-		Vec2& operator/=(T v) { x /= v; y /= v; return *this; }
-
-		Vec2& operator+=(const Vec2& v) { x += v.x; y += v.y; return *this; }
-		Vec2& operator-=(const Vec2& v) { x -= v.x; y -= v.y; return *this; }
-		Vec2& operator*=(const Vec2& v) { x *= v.x; y *= v.y; return *this; }
-		Vec2& operator/=(const Vec2& v) { x /= v.x; y /= v.y; return *this; }
-
-		bool operator==(const Vec2& v) { return x == v.x && y == v.y; }
-		bool operator!=(const Vec2& v) { return x != v.x || y != v.y; }
-		bool operator>(const Vec2& v) { return MagSq() > v.MagSq(); }
-		bool operator>=(const Vec2& v) { return MagSq() >= v.MagSq(); }
-		bool operator<(const Vec2& v) { return MagSq() < v.MagSq(); }
-		bool operator<=(const Vec2& v) { return MagSq() <= v.MagSq(); }
-		
-		T& operator[](size_t i)
-		{
-			switch (i)
-			{
-				case 0: return x;
-				case 1: return y;
-				default: throw std::out_of_range("Index out of range. Allowed indices for Vec2: 0, 1.");
-			}
-		}
-
-		template<class C>
-		friend Vec2<C> operator+(const Vec2<T>& lhs, const C& rhs) { return Vec2<C>(lhs.x + rhs, lhs.y + rhs); }
-		template<class C>
-		friend Vec2<C> operator-(const Vec2<T>& lhs, const C& rhs) { return Vec2<C>(lhs.x - rhs, lhs.y - rhs); }
-		template<class C>
-		friend Vec2<C> operator*(const Vec2<T>& lhs, const C& rhs) { return Vec2<C>(lhs.x * rhs, lhs.y * rhs); }
-		template<class C>
-		friend Vec2<C> operator/(const Vec2<T>& lhs, const C& rhs) { return Vec2<C>(lhs.x / rhs, lhs.y / rhs); }
-
-		friend Vec2<T> operator-(const Vec2<T> vec) { return Vec2<T>(-vec.x, -vec.y); }
-
-		template<class C>
-		friend Vec2<C> operator+(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x + rhs.x, lhs.y + rhs.y); }
-		template<class C>
-		friend Vec2<C> operator-(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x - rhs.x, lhs.y - rhs.y); }
-		template<class C>
-		friend Vec2<C> operator*(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x * rhs.x, lhs.y * rhs.y); }
-		template<class C>
-		friend Vec2<C> operator/(const Vec2<T>& lhs, const Vec2<C>& rhs) { return Vec2<C>(lhs.x / rhs.x, lhs.y / rhs.y); }
-
-		friend std::ostream& operator<<(std::ostream& os, const Vec2<T>& v)
-		{
-			os << v.x << ", " << v.y;
-			return os;
-		}
-	};
-
-	template<class T>
-	struct Vec3
-	{
-		T x, y, z;
-
-	public:
-		Vec3() = default;
-		Vec3(T v) : x(v), y(v), z(v) {}
-		Vec3(T x, T y, T z) : x(x), y(y), z(z) {}
-		Vec3(const Vec3<T>& src) : x(src.x), y(src.y), z(src.z) {}
-
-		T Sum() const { return x + y + z; }
-		T Mul() const { return x * y * z; }
-		T Avg() const { return (x + y + z) / 3; }
-
-		T Min() const { return std::min({ x,y,z }); }
-		T Max() const { return std::max({ x,y,z }); }
-		double MagSq() const { return x * x + y * y + z * z; }
-		double Mag() const { return std::sqrt(MagSq()); }
-
-		double Dot(const Vec3& v) const { return x * v.x + y * v.y + z * v.z; }
-
-		void Zero() { x = y = z = 0; }
-
-		Vec3<double> Normalize() const { double mag = Mag(); return (mag == 0) ? Vec3<double>(x, y, z) : *this / mag; }
-
-		std::string ToStr() const { return std::format("{}, {}, {}", x, y, z); }
-
-	public:
-		template<class NT>
-		operator Vec3<NT>() const { return Vec3<NT>{(NT)x, (NT)y}; }
-
-		Vec3& operator+=(T v) { x += v; y += v; z += v; return *this; }
-		Vec3& operator-=(T v) { x -= v; y -= v; z -= v; return *this; }
-		Vec3& operator*=(T v) { x *= v; y *= v; z *= v; return *this; }
-		Vec3& operator/=(T v) { x /= v; y /= v; z /= v; return *this; }
-
-		Vec3& operator+=(const Vec3& v) { x += v.x; y += v.y; z += v.z; return *this; }
-		Vec3& operator-=(const Vec3& v) { x -= v.x; y -= v.y; z -= v.z; return *this; }
-		Vec3& operator*=(const Vec3& v) { x *= v.x; y *= v.y; z *= v.z; return *this; }
-		Vec3& operator/=(const Vec3& v) { x /= v.x; y /= v.y; z /= v.z; return *this; }
-
-		bool operator==(const Vec3& v) { return x == v.x && y == v.y && z == v.z; }
-		bool operator!=(const Vec3& v) { return x != v.x || y != v.y || z != v.z; }
-		bool operator>(const Vec3& v) { return MagSq() > v.MagSq(); }
-		bool operator>=(const Vec3& v) { return MagSq() >= v.MagSq(); }
-		bool operator<(const Vec3& v) { return MagSq() < v.MagSq(); }
-		bool operator<=(const Vec3& v) { return MagSq() <= v.MagSq(); }
-
-		T& operator[](size_t i)
-		{
-			switch (i)
-			{
-			case 0: return x;
-			case 1: return y;
-			case 2: return z;
-			default: throw std::out_of_range("Index out of range. Allowed indices for Vec3: 0, 1, 2.");
-			}
-		}
-
-		template<class C>
-		friend Vec3<C> operator+(const Vec3<T>& lhs, const C& rhs) { return Vec3<C>(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs); }
-		template<class C>
-		friend Vec3<C> operator-(const Vec3<T>& lhs, const C& rhs) { return Vec3<C>(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs); }
-		template<class C>
-		friend Vec3<C> operator*(const Vec3<T>& lhs, const C& rhs) { return Vec3<C>(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs); }
-		template<class C>
-		friend Vec3<C> operator/(const Vec3<T>& lhs, const C& rhs) { return Vec3<C>(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs); }
-
-		template<class C>
-		friend Vec3<C> operator+(const Vec3<T>& lhs, const Vec3<C>& rhs) { return Vec3<C>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
-		template<class C>
-		friend Vec3<C> operator-(const Vec3<T>& lhs, const Vec3<C>& rhs) { return Vec3<C>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
-		template<class C>
-		friend Vec3<C> operator*(const Vec3<T>& lhs, const Vec3<C>& rhs) { return Vec3<C>(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z); }
-		template<class C>
-		friend Vec3<C> operator/(const Vec3<T>& lhs, const Vec3<C>& rhs) { return Vec3<C>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z); }
-
-		friend Vec3<T> operator-(const Vec3<T> vec) { return Vec3<T>(-vec.x, -vec.y, -vec.z); }
-
-		friend std::ostream& operator<<(std::ostream& os, const Vec3<T>& v)
-		{
-			os << v.x << ", " << v.y << ", " << v.z;
-			return os;
-		}
-	};
-
-	template<class T>
-	struct Vec4
-	{
-		T x, y, z, w;
-
-	public:
-		Vec4() = default;
-		Vec4(T v) : x(v), y(v), z(v), w(v) {}
-		Vec4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
-		Vec4(const Vec4<T>& src) : x(src.x), y(src.y), z(src.z), w(src.w) {}
-
-		T Sum() const { return x + y + z + w; }
-		T Mul() const { return x * y * z * w; }
-		T Avg() const { return (x + y + z + w) / 4; }
-
-		T Min() const { return std::min({ x,y,z,w }); }
-		T Max() const { return std::max({ x,y,z,w }); }
-		double MagSq() const { return x * x + y * y + z * z + w * w; }
-		double Mag() const { return std::sqrt(MagSq()); }
-
-		double Dot(const Vec4& v) const { return x * v.x + y * v.y + z * v.z + w * v.w; }
-
-		void Zero() { x = y = z = w = 0; }
-
-		Vec4<double> Normalize() const { double mag = Mag(); return (mag == 0) ? Vec4<double>(x, y, z, w) : *this / mag; }
-
-		std::string ToStr() const { return std::format("{}, {}, {}, {}", x, y, z, w); }
-
-	public:
-		template<class NT>
-		operator Vec4<NT>() const { return Vec4<NT>{(NT)x, (NT)y}; }
-
-		Vec4& operator+=(T v) { x += v; y += v; z += v; w += v; return *this; }
-		Vec4& operator-=(T v) { x -= v; y -= v; z -= v; w -= v; return *this; }
-		Vec4& operator*=(T v) { x *= v; y *= v; z *= v; w *= v; return *this; }
-		Vec4& operator/=(T v) { x /= v; y /= v; z /= v; w /= v; return *this; }
-
-		Vec4& operator+=(const Vec4& v) { x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
-		Vec4& operator-=(const Vec4& v) { x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this; }
-		Vec4& operator*=(const Vec4& v) { x *= v.x; y *= v.y; z *= v.z; w *= v.w; return *this; }
-		Vec4& operator/=(const Vec4& v) { x /= v.x; y /= v.y; z /= v.z; w /= v.w; return *this; }
-
-		bool operator==(const Vec4& v) { return x == v.x && y == v.y && z == v.z && w == v.w; }
-		bool operator!=(const Vec4& v) { return x != v.x || y != v.y || z != v.z || w != v.w; }
-		bool operator>(const Vec4& v) { return MagSq() > v.MagSq(); }
-		bool operator>=(const Vec4& v) { return MagSq() >= v.MagSq(); }
-		bool operator<(const Vec4& v) { return MagSq() < v.MagSq(); }
-		bool operator<=(const Vec4& v) { return MagSq() <= v.MagSq(); }
-
-		T& operator[](size_t i)
-		{
-			switch (i)
-			{
-			case 0: return x;
-			case 1: return y;
-			case 2: return z;
-			case 3: return w;
-			default: throw std::out_of_range("Index out of range. Allowed indices for Vec4: 0, 1, 2, 3.");
-			}
-		}
-
-		template<class C>
-		friend Vec4<C> operator+(const Vec4<T>& lhs, const C& rhs) { return Vec4<C>(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs, lhs.w + rhs); }
-		template<class C>
-		friend Vec4<C> operator-(const Vec4<T>& lhs, const C& rhs) { return Vec4<C>(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs, lhs.w - rhs); }
-		template<class C>
-		friend Vec4<C> operator*(const Vec4<T>& lhs, const C& rhs) { return Vec4<C>(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs, lhs.w * rhs); }
-		template<class C>
-		friend Vec4<C> operator/(const Vec4<T>& lhs, const C& rhs) { return Vec4<C>(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs); }
-
-		template<class C>
-		friend Vec4<C> operator+(const Vec4<T>& lhs, const Vec4<C>& rhs) { return Vec4<C>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w); }
-		template<class C>
-		friend Vec4<C> operator-(const Vec4<T>& lhs, const Vec4<C>& rhs) { return Vec4<C>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w); }
-		template<class C>
-		friend Vec4<C> operator*(const Vec4<T>& lhs, const Vec4<C>& rhs) { return Vec4<C>(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w); }
-		template<class C>
-		friend Vec4<C> operator/(const Vec4<T>& lhs, const Vec4<C>& rhs) { return Vec4<C>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w); }
-
-		friend Vec4<T> operator-(const Vec4<T> vec) { return Vec4<T>(-vec.x, -vec.y, -vec.z, -vec.w); }
-
-		friend std::ostream& operator<<(std::ostream& os, const Vec4<T>& v)
-		{
-			os << v.x << ", " << v.y << ", " << v.z << ", " << v.w;
-			return os;
-		}
-	};
-
 	// -----------------------------------------------------
-
+	
 	template<class T>
 	struct Segment2
 	{
@@ -768,19 +506,19 @@ namespace math
 	public:
 		Segment2() = default;
 		Segment2(const Vec2<T>& a, const Vec2<T>& b) : a(a), b(b) {}
-		Segment2(T ax, T ay, T bx, T by) : a(Vec2<T>(ax, ay)), b(Vec2<T>(bx, by)) {}
+		Segment2(T ax, T ay, T bx, T by) : a(Vec2<T>({ ax, ay })), b(Vec2<T>({ bx, by })) {}
 		Segment2(const Segment2& src) : a(src.a), b(src.b) {}
 
 		double Len() const { return Distance(a, b); }
 		double LenSq() const { return DistanceSq(a, b); }
 
-		double CenterA() const { return Avg(a.x, a.y); }
-		double CenterB() const { return Avg(b.x, b.y); }
+		double CenterA() const { return Avg(a[0], a[1]); }
+		double CenterB() const { return Avg(b[0], b[1]); }
 		Vec2D Center() const { return Avg(a, b); }
 
 		Vec2D Delta() const { return b - a; }
-		double DeltaX() const { return b.x - a.x; }
-		double DeltaY() const { return b.y - a.y; }
+		double DeltaX() const { return b[0] - a[0]; }
+		double DeltaY() const { return b[1] - a[1]; }
 		Vec2D Dir() const { return -(Delta().Normalize()); }
 
 	public:
@@ -802,10 +540,11 @@ namespace math
 
 		friend std::ostream& operator<<(std::ostream& os, const Segment2<T>& s)
 		{
-			os << "(" << s.a.x << ", " << s.a.y << ")" << " (" << s.b.x << ", " << s.b.y << ")";
+			os << "(" << s.a[0] << ", " << s.a[1] << ")" << " (" << s.b[0] << ", " << s.b[1] << ")";
 			return os;
 		}
 	};
+	
 
 	// -----------------------------------------------------
 	
@@ -833,15 +572,22 @@ namespace math
 			Matrix2<T, row, col> out;
 			for (size_t r = 0; r < row; ++r)
 			{
-				out.elems[r][r] = factor;
+				out.elems[r][r] = (T)factor;
 			}
 			return out;
 		}
 		static Matrix2<T, row, col> Identity()
 		{
-			return Scale(1);
+			return Scale((T)1);
 		}
-		
+		static Matrix2<T, 2, 2> FlipY2()
+		{
+			return { {1,0},{0,-1} };
+		}
+		static Matrix2<T, 2, 2> Rotation2(float ang)
+		{
+			return { {std::cos(ang),-std::sin(ang)},{std::sin(ang),std::count(ang)} };
+		}
 
 	public:
 		template<class C>
@@ -885,7 +631,6 @@ namespace math
 
 	template<class T>
 	double Avg(std::initializer_list<T> ls) { return (std::accumulate(ls.begin(), ls.end(), 0)) / ls.size(); }
-
 	template<class T>
 	Vec2D Avg(const Vec2<T>& v1, const Vec2<T>& v2) { return (v1 + v2) * 0.5; }
 
@@ -893,7 +638,7 @@ namespace math
 	template<class T>
 	double DistanceSq(const Vec2<T>& p1, const Vec2<T>& p2)
 	{
-		return Sqr(p2.x - p1.x) + Sqr(p2.y - p1.y);
+		return Sqr(p2[0] - p1[0]) + Sqr(p2[1] - p1[1]);
 	}
 
 	// distance
@@ -903,10 +648,10 @@ namespace math
 	template<class T>
 	double Distance(const Segment2<T>& s, const Vec2<T>& p)
 	{
-		const double a = s.a.y - s.b.y;
-		const double b = s.b.x - s.a.x;
-		const double c = s.a.x * s.b.y - s.b.x * s.a.y;
-		return std::abs(a * p.x + b * p.y + c) / std::sqrt(Sqr(a) + Sqr(b));
+		const double a = s.a[1] - s.b[1];
+		const double b = s.b[0] - s.a[0];
+		const double c = s.a[0] * s.b[1] - s.b[0] * s.a[1];
+		return std::abs(a * p[0] + b * p[1] + c) / std::sqrt(Sqr(a) + Sqr(b));
 	}
 
 	// dot product
@@ -922,7 +667,7 @@ namespace math
 	// rotation
 	double DegToRad(double d) { return d * (PI / 180); }
 	double RadToDeg(double r) { return r * (180 / PI); }
-
+	/*
 	template<class T>
 	void Rotate(Vec2<T>& v, float rad) { v.Rotate(rad); }
 	
@@ -931,6 +676,7 @@ namespace math
 
 	template<class T>
 	void Rotate90CCW(Vec2<T>& v) { v.Rotate90CCW(); }
+	*/
 
 	//template<class T>
 	//double Angle(const Vec2<T>& v) { return std::asin(v.Mag()); }
